@@ -38,7 +38,7 @@ from google.cloud import resourcemanager_v3
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getcwd() + "\\application_default_credentials.json"
 credentials = GoogleCredentials.get_application_default()
 sm_client = secretmanager.SecretManagerServiceClient()
-sa_key = json.loads(sm_client.access_secret_version(request={"name":'projects/1060770463555/secrets/space-usage/versions/1'}).payload.data.decode("UTF-8"))
+sa_key = json.loads(sm_client.access_secret_version(request={"name":'projects/123/secrets/abc/versions/1'}).payload.data.decode("UTF-8"))
 credentials = service_account.Credentials.from_service_account_info(sa_key)
 #Setup Application Default Credentials -- https://cloud.google.com/docs/authentication/client-libraries#python
 
