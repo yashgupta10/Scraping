@@ -1,0 +1,74 @@
+function sendDataStart() {
+var Link = "https://chat.googleapis.com/v1/spaces/AAAAsgd11pc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=buBjXGr-WjilR5-6huOdb5R3mLBCaoHxnsRkhKB3DTE%3D" // Get chat room webhook link
+
+
+  var payload =  JSON.stringify({text: '⭐EM Backend Tables Refresh Tracking⭐'})
+  var options = {
+          muteHttpExceptions: true,
+          method: 'POST',
+          contentType: 'application/json',
+          payload: payload
+    };
+  
+  var response =  UrlFetchApp.fetch(Link, options );
+
+  Logger.log(response)
+
+}
+
+ function sendData(message) {
+var Link = "https://chat.googleapis.com/v1/spaces/AAAAsgd11pc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=buBjXGr-WjilR5-6huOdb5R3mLBCaoHxnsRkhKB3DTE%3D" // Get chat room webhook link
+
+
+  var payload =  JSON.stringify({text: message})
+  var options = {
+          muteHttpExceptions: true,
+          method: 'POST',
+          contentType: 'application/json',
+          payload: payload
+    };
+  
+  var response =  UrlFetchApp.fetch(Link, options );
+
+  Logger.log(response)
+
+}
+
+
+function dateToTimestamp(date) {
+  return new Date(date).getTime();
+}
+
+//dateToTimestamp("Mon Aug 24 06:33:33 GMT+01:00 2020")
+ function getsheetdata() 
+ {
+  var sheetActive = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = sheetActive.getSheetByName("Log"); // Get Tab name - Make sure to use the correct tab name 
+  var rows = sheet.getRange(2,1,sheet.getLastRow()-1,sheet.getLastColumn()).getValues();
+  var jo = {};
+  var dataArray = [];
+  today = new Date()
+  yesterday = new Date(today.getTime()-1*(24*3600*1000));
+  
+  for (var i = 0, l =rows.length; i<l; i++) {
+    var dataRows = rows[i];
+    var record = {};
+    record['table_name'] = dataRows[0];
+    record['latest_load'] = dateToTimestamp(dataRows[1]);
+    record['check_time'] = dateToTimestamp(dataRows[2]);
+    record['delay'] = dataRows[3];
+    if (dataRows[3] > 1 && record['check_time']  >= yesterday) {
+        sendDataStart()
+        var day=24*60*60*1000;
+        var diff=dataRows[1]-today;
+        var days=Math.floor(diff/day);
+      message = '```Table |' + record['table_name'] + '| not updated since |'+dataRows[1]+'| Days since last update |'+ record['delay'] + '| Please ignore if already working on it. ' +'.```'
+    sendData(message)
+    }
+    Logger.log(record['table_name']);
+    Logger.log(record['delay']);
+    dataArray.push(record);
+  }
+Logger.log(sheet)
+
+}
